@@ -120,9 +120,9 @@ export default function App() {
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.subtitulo}>BahiaMotors</Text>        
         <Text style={styles.titulo}>Venta de Auto</Text> 
-        <Text style={styles.subtitulo}>BahiaMotors</Text>
- 
+
         {/* Costo */}
         <Text style={styles.label}>Costo del Auto ($)</Text>
         <TextInput
@@ -312,18 +312,19 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#1a1a2e',
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 5,
   },
   subtitulo: {
     fontSize: 14,
     color: '#6c757d',
     textAlign: 'center',
-    marginBottom: 24,
+    marginTop: 20,
+    marginBottom: 0,
     letterSpacing: 2,
-    textTransform: 'uppercase',
+    
   },
   label: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: '600',
     color: '#333',
     marginBottom: 6,
@@ -340,8 +341,8 @@ const styles = StyleSheet.create({
     color: '#1a1a2e',
   },
   row: {
-    flexDirection: 'row',
-    gap: 10,
+    flexDirection: 'column',
+    gap: 5,
   },
   opcion: {
     flexDirection: 'row',
@@ -355,13 +356,13 @@ const styles = StyleSheet.create({
   radioRow: {
   flexDirection: 'row',
   alignItems: 'center',
-  gap: 8,
+  gap: 10,
 },
 
 radioCircle: {
   width: 18,
   height: 18,
-  borderRadius: 9,
+  borderRadius: 10,
   borderWidth: 2,
   borderColor: '#0d6efd',
   alignItems: 'center',
