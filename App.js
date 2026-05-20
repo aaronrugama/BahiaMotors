@@ -10,72 +10,89 @@ import {
   Keyboard,
 } from 'react-native';
  
+//Cración de variables contantes
 const ITBM = 0.07;
 const INTERES_CREDITO = 0.08;
 const AUMENTO_AUTOMATICO = 1500;
-const ANOS_CREDITO = 9;
-const MESES_CREDITO = ANOS_CREDITO * 12;
+const ANIOS_CREDITO = 9;
+const MESES_CREDITO = ANIOS_CREDITO * 12;
 const PORCENTAJE_SALARIO = 0.30;
  
+//Este equivale al Main
 export default function App() {
-  const [costo, setCosto] = useState('');
-  const [salario, setSalario] = useState('');
-  const [transmision, setTransmision] = useState(null); // 'manual' | 'automatica'
-  const [formaPago, setFormaPago] = useState(null);     // 'contado' | 'credito'
-  const [resultado, setResultado] = useState(null);
-  const [error, setError] = useState('');
+  //Creación de las variables de estado vacias o sin valor inicial y nulas
+  const [costo, setCosto] = useState(''); //Costo del auto
+  const [salario, setSalario] = useState(''); //Salario mensual del cliente
+  const [transmision, setTransmision] = useState(null); // Guarda 'manual' o 'automatica' 
+  const [formaPago, setFormaPago] = useState(null);     //Guarda 'contado' o 'credito'
+  const [resultado, setResultado] = useState(null); //Para almacenar el resultado
+  const [error, setError] = useState(''); //Para atrapar errores
  
+  //Para formatear números a formato de moneda
   const fmt = (num) =>
     '$' + Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
- 
+  
+  //Función que se ejecuta cuando se preciona "Calcular" y limpia los errores y el resultado anterior
   const calcular = () => {
     setError('');
     setResultado(null);
  
+    //Parseo de strings a números (flotantes)
     const costoNum = parseFloat(costo);
     const salarioNum = parseFloat(salario);
  
+    //Validación de costos vacíos, si es número o menores a cero 
     if (!costo || isNaN(costoNum) || costoNum <= 0) {
       setError('Ingresa un costo válido.');
       return;
     }
+    //Validación de transmisión, si no se seleccionado
     if (!transmision) {
       setError('Selecciona el tipo de transmisión.');
       return;
     }
+
+    //Validacion de formaPago, si no ha seleccionado
     if (!formaPago) {
       setError('Selecciona la forma de pago.');
       return;
     }
+
+    //Verifica si la forma de pado es credito y si es salario no esta vacio o no es numero negativo
     if (formaPago === 'credito' && (!salario || isNaN(salarioNum) || salarioNum <= 0)) {
       setError('Ingresa un salario válido para aplicar al crédito.');
       return;
     }
  
+    //Operador ternario, este se cumple si se elije la transmision automatica se suma el aumento y sino se deja el costo base
     // Precio base ajustado por transmisión
     const precioBase = transmision === 'automatica'
       ? costoNum + AUMENTO_AUTOMATICO
       : costoNum;
  
+    //Si paga al contado solamente se le agrega el ITBMS
     if (formaPago === 'contado') {
       const impuesto = precioBase * ITBM;
       const granTotal = precioBase + impuesto;
  
+      //Se guarda el resultado en un objeto 
       setResultado({
         tipo: 'contado',
         precioBase,
         impuesto,
         granTotal,
       });
+    //Si no es al contado entonces: 
     } else {
       // Crédito: interés compuesto Cf = Ci(1+r)^n  donde n = 9 años
-      const capitalFinal = precioBase * Math.pow(1 + INTERES_CREDITO, ANOS_CREDITO);
-      const itbmTotal = capitalFinal * ITBM;
-      const totalConITBM = capitalFinal + itbmTotal;
-      const letraMensual = totalConITBM / MESES_CREDITO;
-      const treintaPorciento = salarioNum * PORCENTAJE_SALARIO;
-      const aprobado = treintaPorciento >= letraMensual;
+      const capitalFinal = precioBase * Math.pow(1 + INTERES_CREDITO, ANIOS_CREDITO); //Se calcula el capital final con interes compuesto
+      const itbmTotal = capitalFinal * ITBM; //Se calcula el ITBM sobre el capital final
+      const totalConITBM = capitalFinal + itbmTotal; //Se calcula el gran total
+      const letraMensual = totalConITBM / MESES_CREDITO; //Calculo de las cuotas
+      const treintaPorciento = salarioNum * PORCENTAJE_SALARIO; //Calculo del 30% del salario
+      const aprobado = treintaPorciento >= letraMensual; //Verifica si el 30% del salario es mayor o igual a la letra mensual para aprobar o no el crédito
  
+      //Se guarda el resultado en un objeto con toda la información relevante para mostrar al usuario
       setResultado({
         tipo: 'credito',
         precioBase,
@@ -89,6 +106,7 @@ export default function App() {
     }
   };
  
+  //Funcion limpiar 
   const limpiar = () => {
     setCosto('');
     setSalario('');
@@ -98,10 +116,11 @@ export default function App() {
     setError('');
   };
  
+  //Lo que retorna, es loque se ve en la pantalla
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.titulo}>Venta de Auto</Text>
+        <Text style={styles.titulo}>Venta de Auto</Text> 
         <Text style={styles.subtitulo}>BahiaMotors</Text>
  
         {/* Costo */}
@@ -135,8 +154,9 @@ export default function App() {
 
         {/*Tansmision Manual*/}
         <View style={styles.row}>
-          <TouchableOpacity
-            style={[styles.opcion, transmision === 'manual' && styles.opcionActiva]}
+          {/*Para crear los botones, en este caso los radiosbuttons*/}
+          <TouchableOpacity 
+            style={[styles.opcion, transmision === 'manual' && styles.opcionActiva]} 
             onPress={() => setTransmision('manual')}
           >
             <View style={styles.radioRow}>
@@ -232,19 +252,19 @@ export default function App() {
             {resultado.tipo === 'credito' && (
               <>
                 <View style={styles.filaResultado}>
-                  <Text style={styles.filaLabel}>Capital final (8% × 9 años):</Text>
+                  <Text style={styles.filaLabel}>Capital final:</Text>
                   <Text style={styles.filaValor}>{fmt(resultado.capitalFinal)}</Text>
                 </View>
                 <View style={styles.filaResultado}>
-                  <Text style={styles.filaLabel}>ITBM sobre capital (7%):</Text>
+                  <Text style={styles.filaLabel}>ITBM (7%):</Text>
                   <Text style={styles.filaValor}>{fmt(resultado.itbmTotal)}</Text>
                 </View>
                 <View style={styles.filaResultado}>
-                  <Text style={styles.filaLabel}>Total con ITBM:</Text>
+                  <Text style={styles.filaLabel}>Total:</Text>
                   <Text style={styles.filaValor}>{fmt(resultado.totalConITBM)}</Text>
                 </View>
                 <View style={[styles.filaResultado, styles.filaTotal]}>
-                  <Text style={styles.filaTotalLabel}>Letra mensual (108 meses):</Text>
+                  <Text style={styles.filaTotalLabel}>Letra mensual:</Text>
                   <Text style={styles.filaTotalValor}>{fmt(resultado.letraMensual)}</Text>
                 </View>
                 <View style={styles.filaResultado}>
