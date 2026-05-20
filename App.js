@@ -116,19 +116,17 @@ export default function App() {
 
             onSubmitEditing={() => Keyboard.dismiss()}
         />
- 
-        {/* Salario */}
-        <Text style={styles.label}>Salario Mensual ($)</Text>
+        
+        {formaPago === 'credito' && (<View><Text style={styles.label}>Salario Mensual ($)</Text>
         <TextInput
-          style={styles.input}
-          placeholder="Ej: 1200"
-          keyboardType="decimal-pad"
-          returnKeyType="done"
-          value={salario}
-          onChangeText={setSalario}
-
-            onSubmitEditing={() => Keyboard.dismiss()}
-        />
+        style={styles.input}
+        placeholder="Ej: 1200"
+        keyboardType="decimal-pad"
+        returnKeyType="done"
+        value={salario}
+        onChangeText={setSalario}
+        onSubmitEditing={() => Keyboard.dismiss()}/>
+        </View>)}
  
         {/* Transmisión */}
         <Text style={styles.label}>Transmisión</Text>
